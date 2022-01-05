@@ -4,7 +4,7 @@ WITH customer_orders AS (
         , MIN(order_date) as first_order_date
         , MAX(order_date) as most_recent_order_date
         , COUNT(order_id) as number_of_orders
-        , SUM(CASE WHEN status = 'success' THEN amount ELSE 0 END) as lifetime_value
+        , SUM(amount) as lifetime_value
     FROM {{ ref('fct_orders') }}
     GROUP BY 1
 )
