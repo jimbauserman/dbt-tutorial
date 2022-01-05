@@ -4,4 +4,4 @@ SELECT
     , status as payment_status
     , amount / 100.0 as amount
     , created as payment_created
-FROM {{ source('stripe', 'payments') }}
+FROM {{ source('stripe', 'payment') }}
