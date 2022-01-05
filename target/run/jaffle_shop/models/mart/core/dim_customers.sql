@@ -5,28 +5,26 @@
   
   OPTIONS()
   as (
-    with customer_orders as (
-    select
-        customer_id,
-        min(order_date) as first_order_date,
-        max(order_date) as most_recent_order_date,
-        count(order_id) as number_of_orders
-    from `dbt-fundamentals-337218`.`dbt_jbauserman`.`stg_orders`
-    group by 1
-),
-
-final as (
-    select
-        c.customer_id,
-        c.first_name,
-        c.last_name,
-        customer_orders.first_order_date,
-        customer_orders.most_recent_order_date,
-        coalesce(customer_orders.number_of_orders, 0) as number_of_orders
-    from `dbt-fundamentals-337218`.`dbt_jbauserman`.`stg_customers` c
-    left join customer_orders using (customer_id)
+    WITH customer_orders AS (
+    SELECT
+          customer_id
+        , MIN(order_date) as first_order_date
+        , MAX(order_date) as most_recent_order_date
+        , COUNT(order_id) as number_of_orders
+        , SUM(CASE WHEN status = 'success' THEN amount ELSE 0 END) as lifetime_value
+    FROM `dbt-fundamentals-337218`.`dbt_jbauserman`.`fct_orders`
+    GROUP BY 1
 )
 
-select * from final
+SELECT
+      c.customer_id
+    , c.first_name
+    , c.last_name
+    , co.first_order_date
+    , co.most_recent_order_date
+    , coalesce(co.number_of_orders, 0) as number_of_orders
+    , coalesce(co.lifetime_value, 0) as lifetime_value
+FROM `dbt-fundamentals-337218`.`dbt_jbauserman`.`stg_customers` c
+    LEFT JOIN customer_orders co USING (customer_id)
   );
   

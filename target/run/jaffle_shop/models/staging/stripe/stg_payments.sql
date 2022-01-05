@@ -6,7 +6,7 @@
       id as payment_id
     , orderid as order_id
     , status as payment_status
-    , amount
+    , amount / 100.0 as amount
     , created as payment_created
 FROM dbt-tutorial.stripe.payment;
 
