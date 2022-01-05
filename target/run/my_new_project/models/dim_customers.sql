@@ -1,47 +1,34 @@
 
 
-  create or replace view `dbt-fundamentals-337218`.`dbt_jbauserman`.`dim_customers`
+  create or replace table `dbt-fundamentals-337218`.`dbt_jbauserman`.`dim_customers`
+  
+  
   OPTIONS()
-  as with customers as (
-    select
-        id as customer_id,
-        first_name,
-        last_name
+  as (
+    
 
-    from dbt-training.jaffle_shop.customers
-),
-
-orders as (
-    select
-        id as order_id,
-        user_id as customer_id,
-        order_date,
-        status
-    from dbt-training.jaffle_shop.orders
-),
-
-customer_orders as (
+with customer_orders as (
     select
         customer_id,
         min(order_date) as first_order_date,
         max(order_date) as most_recent_order_date,
         count(order_id) as number_of_orders
-    from orders
+    from `dbt-fundamentals-337218`.`dbt_jbauserman`.`stg_orders`
     group by 1
 ),
 
-
 final as (
     select
-        customers.customer_id,
-        customers.first_name,
-        customers.last_name,
+        c.customer_id,
+        c.first_name,
+        c.last_name,
         customer_orders.first_order_date,
         customer_orders.most_recent_order_date,
         coalesce(customer_orders.number_of_orders, 0) as number_of_orders
-    from customers
+    from `dbt-fundamentals-337218`.`dbt_jbauserman`.`stg_customers` c
     left join customer_orders using (customer_id)
 )
 
-select * from final;
-
+select * from final
+  );
+  
