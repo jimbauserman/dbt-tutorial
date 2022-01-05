@@ -1,10 +1,14 @@
-with customers as (
+
+
+  create or replace view `dbt-fundamentals-337218`.`dbt_jbauserman`.`dim_customers`
+  OPTIONS()
+  as with customers as (
     select
         id as customer_id,
         first_name,
         last_name
 
-    from dbt-tutorial.jaffle_shop.customers
+    from dbt-training.jaffle_shop.customers
 ),
 
 orders as (
@@ -13,7 +17,7 @@ orders as (
         user_id as customer_id,
         order_date,
         status
-    from dbt-tutorial.jaffle_shop.orders
+    from dbt-training.jaffle_shop.orders
 ),
 
 customer_orders as (
@@ -39,4 +43,5 @@ final as (
     left join customer_orders using (customer_id)
 )
 
-select * from final
+select * from final;
+
