@@ -4,4 +4,4 @@ SELECT
     , status as payment_status
     , amount / 100.0 as amount
     , created as payment_created
-FROM dbt-tutorial.stripe.payment
+FROM {{ source('stripe', 'payments') }}
